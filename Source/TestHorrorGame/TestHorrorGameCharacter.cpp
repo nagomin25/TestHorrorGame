@@ -94,25 +94,23 @@ void ATestHorrorGameCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 void ATestHorrorGameCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
+	// 左スティックの入力値を2Dベクトルで取得
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	// 前後移動: キャラクター自身の前方向に沿って移動する
+	AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	// 左右入力でキャラクターを回転させる
+	// ここでは、回転速度（度/秒）を任意に設定
+	const float TurnRate = 100.0f; // 例：100度/秒
+	// DeltaTimeを掛けることでフレームレートに依存しない回転にする
+	const float DeltaSeconds = GetWorld()->GetDeltaSeconds();
+	const float YawRotationDelta = MovementVector.X * TurnRate * DeltaSeconds;
 
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
+	// 現在の回転を取得し、Yaw（左右回転）に回転量を加算
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Yaw += YawRotationDelta;
+	SetActorRotation(NewRotation);
 }
 
 void ATestHorrorGameCharacter::Look(const FInputActionValue& Value)
