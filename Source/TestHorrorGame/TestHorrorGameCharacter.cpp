@@ -27,7 +27,7 @@ ATestHorrorGameCharacter::ATestHorrorGameCharacter()
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
@@ -94,24 +94,37 @@ void ATestHorrorGameCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 void ATestHorrorGameCharacter::Move(const FInputActionValue& Value)
 {
-	// 左スティックの入力値を2Dベクトルで取得
+	// 入力値を2Dベクトルとして取得（X: 左右, Y: 前後）
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	// 前後移動: キャラクター自身の前方向に沿って移動する
-	AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+	// 前後移動: キャラクターの前方向に沿って移動
+	if (FMath::Abs(MovementVector.Y) > KINDA_SMALL_NUMBER)
+	{
+		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+	}
 
-	// 左右入力でキャラクターを回転させる
-	// ここでは、回転速度（度/秒）を任意に設定
-	const float TurnRate = 100.0f; // 例：100度/秒
-	// DeltaTimeを掛けることでフレームレートに依存しない回転にする
-	const float DeltaSeconds = GetWorld()->GetDeltaSeconds();
-	const float YawRotationDelta = MovementVector.X * TurnRate * DeltaSeconds;
+	// 左右回転: 十字キーやアナログスティックからの左右入力で回転
+	// デッドゾーンの設定（例: 0.2f）
+	const float Deadzone = 0.6f;
+	if (FMath::Abs(MovementVector.X) > Deadzone)
+	{
+		// デッドゾーンを超えた部分だけを正規化
+		float AdjustedInput = (FMath::Abs(MovementVector.X) - Deadzone) / (1.0f - Deadzone);
+		AdjustedInput = FMath::Sign(MovementVector.X) * AdjustedInput;
 
-	// 現在の回転を取得し、Yaw（左右回転）に回転量を加算
-	FRotator NewRotation = GetActorRotation();
-	NewRotation.Yaw += YawRotationDelta;
-	SetActorRotation(NewRotation);
+		// ターンレートをさらに下げる（例: 15度/秒）
+		const float TurnRate = 130.0f;
+		float DeltaTime = GetWorld()->GetDeltaSeconds();
+		float YawRotationDelta = AdjustedInput * TurnRate * DeltaTime;
+
+		// 現在の回転に回転量を加算
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Yaw += YawRotationDelta;
+		SetActorRotation(NewRotation);
+	}
 }
+
+
 
 void ATestHorrorGameCharacter::Look(const FInputActionValue& Value)
 {
