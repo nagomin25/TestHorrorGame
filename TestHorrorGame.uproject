@@ -25,6 +25,10 @@
 			"Name": "RetroRenderer",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/ec15fd71537a4de4ada7deedf6ae3ba5"
+		},
+		{
+			"Name": "UnrealMCP",
+			"Enabled": false
 		}
 	]
 }
