@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "InventoryComponent.h"
+#include "InventoryWidget.h" 
 #include "TestHorrorGameCharacter.generated.h"
 
 class USpringArmComponent;
@@ -32,10 +34,6 @@ class ATestHorrorGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -44,8 +42,46 @@ class ATestHorrorGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Inventory Open/Close Input Action 
+	* コンストラクタで初期設定されますが、Blueprintでオーバーライド可能です
+	* デフォルトパス: /Game/Input/Actions/IA_OpenInventory
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* OpenInventoryAction;
+
+	/** Interact Input Action 
+	* アイテムを拾うなどのインタラクション用
+	* デフォルトパス: /Game/Input/Actions/IA_Interact
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 public:
 	ATestHorrorGameCharacter();
+
+	// インベントリコンポーネント
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
+	UInventoryComponent* InventoryComponent;
+
+	// インベントリUIのクラス（Blueprintをアサイン）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+
+	// 実体（AddToViewportされたもの）
+	UPROPERTY()
+	UInventoryWidget* InventoryWidget;
+
+	// 表示／非表示用関数
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
+	
+	// インタラクト関数
+	UFUNCTION(BlueprintCallable)
+	void Interact();
+	
+	// 現在インタラクト可能なアイテム
+	UPROPERTY()
+	TArray<class AItemActor*> InteractableItems;
 	
 
 protected:

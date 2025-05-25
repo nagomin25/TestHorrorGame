@@ -8,6 +8,18 @@ public class TestHorrorGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput",
+			"UMG",
+			"Slate",
+			"SlateCore"
+		});
+		
+		// プロジェクトのPublicフォルダをインクルードパスに追加
+		PublicIncludePaths.Add(ModuleDirectory + "/Public");
 	}
 }
