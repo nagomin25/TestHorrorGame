@@ -91,9 +91,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 
 	virtual void NotifyControllerChanged() override;
 

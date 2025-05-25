@@ -4,8 +4,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Character.h"
 #include "InventoryComponent.h"
-
-
+#include "UObject/ConstructorHelpers.h"
 
 AItemActor::AItemActor()
 {
@@ -24,6 +23,25 @@ AItemActor::AItemActor()
 
 	bCanInteract = false;
 	PlayerInRange = nullptr;
+
+	// デフォルトのアイテムデータを設定（テスト用）
+	ItemData.ItemID = FName("DefaultItem");
+	ItemData.Name = FText::FromString("テストアイテム");
+	ItemData.Description = FText::FromString("これはテスト用のアイテムです。説明がここに表示されます。");
+	ItemData.MaxStack = 99;
+	ItemData.Icon = nullptr; // アイコンはブループリントで設定
+	
+	// テスト用：デフォルトキューブメッシュを使用
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultMesh(TEXT("/Engine/BasicShapes/Cube"));
+	if (DefaultMesh.Succeeded())
+	{
+		ItemData.Mesh = DefaultMesh.Object;
+		UE_LOG(LogTemp, Warning, TEXT("✅ Default cube mesh assigned for testing"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("⚠️ Could not find default cube mesh"));
+	}
 }
 
 void AItemActor::BeginPlay()
@@ -90,6 +108,13 @@ void AItemActor::Interact(ACharacter* Character)
 	{
 		return;
 	}
+
+	// デバッグ：送信するアイテムデータを確認
+	UE_LOG(LogTemp, Warning, TEXT("🎮 ItemActor::Interact - Sending item data:"));
+	UE_LOG(LogTemp, Warning, TEXT("📋 ItemID: %s"), *ItemData.ItemID.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("📋 Name: %s"), *ItemData.Name.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("📋 Description: %s"), *ItemData.Description.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("📋 MaxStack: %d"), ItemData.MaxStack);
 
 	UInventoryComponent* Inventory = Character->FindComponentByClass<UInventoryComponent>();
 	if (Inventory)

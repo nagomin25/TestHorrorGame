@@ -16,7 +16,9 @@ public class TestHorrorGame : ModuleRules
 			"EnhancedInput",
 			"UMG",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+			"RenderCore",
+			"RHI"
 		});
 		
 		// プロジェクトのPublicフォルダをインクルードパスに追加

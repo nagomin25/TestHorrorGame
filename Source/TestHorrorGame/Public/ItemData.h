@@ -20,6 +20,9 @@ struct FItemData : public FTableRowBase
 	UTexture2D* Icon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
+	UStaticMesh* Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
 	int32 MaxStack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
