@@ -1,22 +1,11 @@
 #include "InventorySlotWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "InventoryMeshWidget.h"
 #include "Blueprint/UserWidget.h"
 
 void UInventorySlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	// 3Dメッシュウィジェットの確認
-	if (ItemMeshWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("✅ ItemMeshWidget found in blueprint"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("❌ ItemMeshWidget is required but not found in blueprint!"));
-	}
 	
 	// 2Dアイコンはオプショナル
 	if (ItemIcon)
@@ -53,38 +42,44 @@ void UInventorySlotWidget::Setup(const FInventorySlot& SlotData)
         UE_LOG(LogTemp, Error, TEXT("❌ ItemCountText is nullptr!"));
     }
 
-    // アイテム表示の設定（3Dメッシュを優先）
-    if (SlotData.Item.Mesh && ItemMeshWidget)
+    // アイテム表示の設定（2Dアイコンを優先）
+    if (SlotData.Item.Icon && ItemIcon)
     {
-        // 3Dメッシュを表示
-        UE_LOG(LogTemp, Warning, TEXT("🎯 Using 3D mesh display"));
-        ItemMeshWidget->SetMesh(SlotData.Item.Mesh);
-        ItemMeshWidget->SetVisibility(ESlateVisibility::Visible);
+        // 2Dアイコンを表示
+        UE_LOG(LogTemp, Warning, TEXT("🖼️ Using 2D icon display (recommended)"));
+        ItemIcon->SetBrushFromTexture(SlotData.Item.Icon);
+        ItemIcon->SetVisibility(ESlateVisibility::Visible);
         
-        // 2Dアイコンは非表示（存在する場合）
+        
+        UE_LOG(LogTemp, Warning, TEXT("✅ 2D icon displayed: %s"), *SlotData.Item.Icon->GetName());
+    }
+    else if (SlotData.Item.Mesh && ItemIcon)
+    {
+        // フォールバック：3Dメッシュを表示
+        UE_LOG(LogTemp, Warning, TEXT("🎯 Fallback to 3D mesh display"));
+        
+        // C++側で直接メッシュを設定
+        SetMeshDirect(SlotData.Item.Mesh);
+        
+        // C++実装のSetMeshForWidgetを呼び出し（Blueprint Event Graph代替）
+        SetMeshForWidgetCpp(SlotData.Item.Mesh);
+        
+        // Blueprint側でもイベントを呼び出し（Blueprint側でのカスタマイズ用）
+        SetMeshForWidget(SlotData.Item.Mesh);
+        
+        ItemIcon->SetVisibility(ESlateVisibility::Visible);
+        
+        // 2Dアイコンは非表示
         if (ItemIcon)
         {
             ItemIcon->SetVisibility(ESlateVisibility::Hidden);
         }
     }
-    else if (SlotData.Item.Icon && ItemIcon)
-    {
-        // フォールバック：2Dアイコンを表示
-        UE_LOG(LogTemp, Warning, TEXT("🖼️ Fallback to 2D icon display"));
-        ItemIcon->SetBrushFromTexture(SlotData.Item.Icon);
-        ItemIcon->SetVisibility(ESlateVisibility::Visible);
-        
-        // 3Dウィジェットは非表示
-        if (ItemMeshWidget)
-        {
-            ItemMeshWidget->SetVisibility(ESlateVisibility::Hidden);
-        }
-    }
-    else if (ItemMeshWidget)
+    else if (ItemIcon)
     {
         // メッシュもアイコンもない場合は3Dウィジェットを空で表示
         UE_LOG(LogTemp, Warning, TEXT("⚠️ No mesh or icon available, showing empty 3D widget"));
-        ItemMeshWidget->SetVisibility(ESlateVisibility::Visible);
+        ItemIcon->SetVisibility(ESlateVisibility::Visible);
         
         if (ItemIcon)
         {
@@ -138,3 +133,42 @@ void UInventorySlotWidget::Setup(const FInventorySlot& SlotData)
         UE_LOG(LogTemp, Error, TEXT("❌ ItemDescriptionText is nullptr!"));
     }
 }
+
+void UInventorySlotWidget::SetMeshDirect(UStaticMesh* NewMesh)
+{
+    UE_LOG(LogTemp, Warning, TEXT("🎯 SetMeshDirect called with mesh: %s"), 
+        NewMesh ? *NewMesh->GetName() : TEXT("NULL"));
+
+    if (!NewMesh)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("⚠️ SetMeshDirect called with null mesh"));
+        return;
+    }
+
+    if (!ItemIcon)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ ItemIcon is null in SetMeshDirect"));
+        return;
+    }
+    
+}
+
+void UInventorySlotWidget::SetMeshForWidgetCpp(UStaticMesh* NewMesh)
+{
+    UE_LOG(LogTemp, Warning, TEXT("🎯 SetMeshForWidgetCpp called (C++ implementation of Blueprint Event Graph)"));
+    
+    if (!NewMesh)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("⚠️ SetMeshForWidgetCpp called with null mesh"));
+        return;
+    }
+
+    if (!ItemIcon)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ ItemIcon is null in SetMeshForWidgetCpp"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("📦 C++ Implementation - Setting mesh: %s"), *NewMesh->GetName());
+}
+

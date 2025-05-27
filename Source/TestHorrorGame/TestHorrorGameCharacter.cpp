@@ -10,8 +10,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Engine/LocalPlayer.h"
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.h"
+#include "MenuWidget.h"
 #include "ItemActor.h"
 
 
@@ -147,11 +149,11 @@ void ATestHorrorGameCharacter::SetupPlayerInputComponent(UInputComponent* Player
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATestHorrorGameCharacter::Look);
 		}
 
-		// インベントリアクションのバインド
+		// インベントリアクションのバインド（新しいMenuWidgetを使用）
 		if (OpenInventoryAction)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Binding OpenInventoryAction"));
-			EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this, &ATestHorrorGameCharacter::ToggleInventory);
+			UE_LOG(LogTemp, Warning, TEXT("Binding OpenInventoryAction to ToggleMenu"));
+			EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this, &ATestHorrorGameCharacter::ToggleMenu);
 		}
 		
 		// インタラクトアクションのバインド
@@ -257,6 +259,140 @@ void ATestHorrorGameCharacter::ToggleInventory()
 			UE_LOG(LogTemp, Warning, TEXT("Showing InventoryWidget again"));
 			InventoryWidget->AddToViewport();
 			InventoryWidget->SetInventory(InventoryComponent->Inventory);
+		}
+	}
+}
+
+void ATestHorrorGameCharacter::ToggleMenu()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ToggleMenu called!"));
+
+	// MenuWidgetClassが設定されているか確認
+	if (!MenuWidgetClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ MenuWidgetClass is not set in Blueprint!"));
+		return;
+	}
+
+	// InventoryComponentの中身チェック
+	if (!InventoryComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ InventoryComponent is null!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Menu: Inventory contains %d items"), InventoryComponent->Inventory.Num());
+
+	// PlayerControllerとInputSubsystemを取得
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = nullptr;
+	if (PlayerController)
+	{
+		Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+	}
+
+	// MenuWidgetがNull、かつMenuWidgetClassが設定されている場合は新しく作成
+	if (!MenuWidget && MenuWidgetClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Creating new MenuWidget"));
+		MenuWidget = CreateWidget<UMenuWidget>(GetWorld(), MenuWidgetClass);
+
+		if (!MenuWidget)
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ Failed to create MenuWidget!"));
+			return;
+		}
+
+		// メニュー表示時の設定
+		MenuWidget->AddToViewport();
+		UE_LOG(LogTemp, Warning, TEXT("✅ MenuWidget Added to Viewport (initial)"));
+		MenuWidget->SetInventory(InventoryComponent->Inventory);
+
+		// Input Mapping Contextをメニュー用に切り替え
+		if (Subsystem && MenuMappingContext)
+		{
+			Subsystem->RemoveMappingContext(DefaultMappingContext);
+			Subsystem->AddMappingContext(MenuMappingContext, 0);
+			UE_LOG(LogTemp, Warning, TEXT("🎮 Switched to Menu Input Context"));
+		}
+
+		// マウスカーソルを表示
+		if (PlayerController)
+		{
+			PlayerController->bShowMouseCursor = true;
+			PlayerController->SetInputMode(FInputModeGameAndUI());
+		}
+
+		return;
+	}
+
+	// 既存のMenuWidgetがある場合は表示/非表示を切り替え
+	if (MenuWidget)
+	{
+		if (MenuWidget->IsInViewport())
+		{
+			// メニューを閉じる
+			UE_LOG(LogTemp, Warning, TEXT("Hiding MenuWidget"));
+			MenuWidget->RemoveFromParent();
+
+			// Input Mapping Contextを通常に戻す
+			if (Subsystem && DefaultMappingContext)
+			{
+				Subsystem->RemoveMappingContext(MenuMappingContext);
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+				UE_LOG(LogTemp, Warning, TEXT("🎮 Switched back to Default Input Context"));
+			}
+
+			// マウスカーソルを非表示
+			if (PlayerController)
+			{
+				PlayerController->bShowMouseCursor = false;
+				PlayerController->SetInputMode(FInputModeGameOnly());
+			}
+
+			// MenuWidgetの参照をクリア
+			MenuWidget = nullptr;
+		}
+		else
+		{
+			// メニューを表示
+			UE_LOG(LogTemp, Warning, TEXT("Showing MenuWidget again"));
+			MenuWidget->AddToViewport();
+			MenuWidget->SetInventory(InventoryComponent->Inventory);
+
+			// Input Mapping Contextをメニュー用に切り替え
+			if (Subsystem && MenuMappingContext)
+			{
+				Subsystem->RemoveMappingContext(DefaultMappingContext);
+				Subsystem->AddMappingContext(MenuMappingContext, 0);
+				UE_LOG(LogTemp, Warning, TEXT("🎮 Switched to Menu Input Context"));
+			}
+
+			// マウスカーソルを表示
+			if (PlayerController)
+			{
+				PlayerController->bShowMouseCursor = true;
+				PlayerController->SetInputMode(FInputModeGameAndUI());
+			}
+		}
+	}
+	else
+	{
+		// MenuWidgetがnullの場合（外部から削除された可能性）
+		// Input Contextを確実に通常に戻す
+		UE_LOG(LogTemp, Warning, TEXT("MenuWidget is null, ensuring default input context"));
+		if (Subsystem && DefaultMappingContext)
+		{
+			Subsystem->RemoveMappingContext(MenuMappingContext);
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			UE_LOG(LogTemp, Warning, TEXT("🎮 Restored Default Input Context"));
+		}
+
+		// マウスカーソルを非表示
+		if (PlayerController)
+		{
+			PlayerController->bShowMouseCursor = false;
+			PlayerController->SetInputMode(FInputModeGameOnly());
 		}
 	}
 }

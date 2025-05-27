@@ -6,7 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "InventoryComponent.h"
-#include "InventoryWidget.h" 
+#include "InventoryWidget.h"
+#include "MenuWidget.h"
 #include "TestHorrorGameCharacter.generated.h"
 
 class USpringArmComponent;
@@ -30,9 +31,6 @@ class ATestHorrorGameCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 	
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -71,9 +69,21 @@ public:
 	UPROPERTY()
 	UInventoryWidget* InventoryWidget;
 
+	// メニューUIのクラス（Blueprintをアサイン）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UMenuWidget> MenuWidgetClass;
+
+	// メニューウィジェットの実体
+	UPROPERTY()
+	UMenuWidget* MenuWidget;
+
 	// 表示／非表示用関数
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
+
+	// メニュー表示／非表示用関数
+	UFUNCTION(BlueprintCallable)
+	void ToggleMenu();
 	
 	// インタラクト関数
 	UFUNCTION(BlueprintCallable)
@@ -82,6 +92,14 @@ public:
 	// 現在インタラクト可能なアイテム
 	UPROPERTY()
 	TArray<class AItemActor*> InteractableItems;
+
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* DefaultMappingContext;
+
+	/** Menu MappingContext - メニュー表示中に使用 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* MenuMappingContext;
 	
 
 protected:
@@ -103,4 +121,3 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
-

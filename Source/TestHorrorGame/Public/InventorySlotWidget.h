@@ -3,11 +3,12 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "InventoryComponent.h"
+#include "Engine/StaticMesh.h"
 #include "InventorySlotWidget.generated.h"
 
 class UImage;
 class UTextBlock;
-class UInventoryMeshWidget;
+class UUserWidget;
 
 UCLASS(Blueprintable)
 class TESTHORRORGAME_API UInventorySlotWidget : public UUserWidget
@@ -17,6 +18,18 @@ class TESTHORRORGAME_API UInventorySlotWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void Setup(const FInventorySlot& SlotData);
+
+	// Blueprint側でメッシュ設定を処理するためのイベント
+	UFUNCTION(BlueprintImplementableEvent, Category="Inventory")
+	void SetMeshForWidget(UStaticMesh* NewMesh);
+
+	// C++側でも直接メッシュを設定できる関数
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void SetMeshDirect(UStaticMesh* NewMesh);
+
+	// SetMeshForWidgetのC++実装版（BlueprintとC++両方で使用可能）
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void SetMeshForWidgetCpp(UStaticMesh* NewMesh);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -33,14 +46,6 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemNameText;
-
-	// 3Dメッシュ表示用ウィジェット（メイン表示）
-	UPROPERTY(meta = (BindWidget))
-	UInventoryMeshWidget* ItemMeshWidget;
-
-	// 3Dメッシュ表示ウィジェットのクラス（Blueprintで設定）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
-	TSubclassOf<UInventoryMeshWidget> MeshWidgetClass;
 
 private:
 	// 現在のアイテムデータ
