@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "InventoryComponent.h"
+#include "InventoryWidget.h"
+#include "MenuWidget.h"
 #include "TestHorrorGameCharacter.generated.h"
 
 class USpringArmComponent;
@@ -28,13 +31,6 @@ class ATestHorrorGameCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 	
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -44,8 +40,66 @@ class ATestHorrorGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Inventory Open/Close Input Action 
+	* コンストラクタで初期設定されますが、Blueprintでオーバーライド可能です
+	* デフォルトパス: /Game/Input/Actions/IA_OpenInventory
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* OpenInventoryAction;
+
+	/** Interact Input Action 
+	* アイテムを拾うなどのインタラクション用
+	* デフォルトパス: /Game/Input/Actions/IA_Interact
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 public:
 	ATestHorrorGameCharacter();
+
+	// インベントリコンポーネント
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
+	UInventoryComponent* InventoryComponent;
+
+	// インベントリUIのクラス（Blueprintをアサイン）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+
+	// 実体（AddToViewportされたもの）
+	UPROPERTY()
+	UInventoryWidget* InventoryWidget;
+
+	// メニューUIのクラス（Blueprintをアサイン）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UMenuWidget> MenuWidgetClass;
+
+	// メニューウィジェットの実体
+	UPROPERTY()
+	UMenuWidget* MenuWidget;
+
+	// 表示／非表示用関数
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
+
+	// メニュー表示／非表示用関数
+	UFUNCTION(BlueprintCallable)
+	void ToggleMenu();
+	
+	// インタラクト関数
+	UFUNCTION(BlueprintCallable)
+	void Interact();
+	
+	// 現在インタラクト可能なアイテム
+	UPROPERTY()
+	TArray<class AItemActor*> InteractableItems;
+
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* DefaultMappingContext;
+
+	/** Menu MappingContext - メニュー表示中に使用 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* MenuMappingContext;
 	
 
 protected:
@@ -55,9 +109,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 
 	virtual void NotifyControllerChanged() override;
 
@@ -69,4 +121,3 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
-

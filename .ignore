@@ -4,6 +4,9 @@
 /.vscode
 /Content
 /DerivedDataCache
+/Docs
 /Intermediate
 /Saved
 /Plugins/Developer/RiderLink/Intermediate
+/Plugins/UnrealMCP/Content
+/Plugins/UnrealMCP/Intermediate

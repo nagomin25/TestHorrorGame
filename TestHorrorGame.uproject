@@ -9,7 +9,8 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"UMG"
 			]
 		}
 	],
@@ -20,6 +21,15 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "UnrealMCP",
+			"Enabled": false
+		},
+		{
+			"Name": "RetroRenderer",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/ec15fd71537a4de4ada7deedf6ae3ba5"
 		}
 	]
 }
