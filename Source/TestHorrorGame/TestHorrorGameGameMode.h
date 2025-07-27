@@ -15,8 +15,6 @@ public:
 	ATestHorrorGameGameMode();
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
-	TSubclassOf<AActor> DefaultPawnClass;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
 	TSubclassOf<AActor> DefaultHUDClass;
@@ -38,9 +36,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
 	TSubclassOf<AActor> DefaultGameSessionClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
-	TSubclassOf<AActor> DefaultReplaySpectatorClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
 	TSubclassOf<AActor> DefaultReplayGameModeClass;
@@ -67,14 +62,10 @@ protected:
 	TSubclassOf<AActor> DefaultReplaySpectatorControllerClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
-	TSubclassOf<AActor> DefaultReplaySpectatorPawnClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
 	TSubclassOf<AActor> DefaultReplaySpectatorPlayerStateClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameMode")
 	TSubclassOf<AActor> DefaultReplaySpectatorPlayerControllerClass;
-	ATestHorrorGameGameMode();
 };
 
 
