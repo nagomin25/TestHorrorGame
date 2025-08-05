@@ -18,7 +18,8 @@ public class TestHorrorGame : ModuleRules
 			"Slate",
 			"SlateCore",
 			"RenderCore",
-			"RHI"
+			"RHI",
+			"AnimationCore"
 		});
 		
 		// プロジェクトのPublicフォルダをインクルードパスに追加
