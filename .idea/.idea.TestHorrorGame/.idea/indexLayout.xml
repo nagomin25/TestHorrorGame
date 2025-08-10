@@ -2,7 +2,12 @@
 <project version="4">
   <component name="UserContentModel">
     <attachedFolders />
-    <explicitIncludes />
+    <explicitIncludes>
+      <Path>Source/TestHorrorGame/Private/EnemyAIController.cpp</Path>
+      <Path>Source/TestHorrorGame/Private/EnemyCharacter.cpp</Path>
+      <Path>Source/TestHorrorGame/Public/EnemyAIController.h</Path>
+      <Path>Source/TestHorrorGame/Public/EnemyCharacter.h</Path>
+    </explicitIncludes>
     <explicitExcludes />
   </component>
 </project>

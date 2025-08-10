@@ -19,7 +19,10 @@ public class TestHorrorGame : ModuleRules
 			"SlateCore",
 			"RenderCore",
 			"RHI",
-			"AnimationCore"
+			"AnimationCore",
+			"AIModule",
+			"GameplayTasks",
+			"NavigationSystem"
 		});
 		
 		// プロジェクトのPublicフォルダをインクルードパスに追加
