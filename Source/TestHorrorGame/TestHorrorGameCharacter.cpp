@@ -33,6 +33,11 @@ ATestHorrorGameCharacter::ATestHorrorGameCharacter()
 	Health = MaxHealth;
 	bIsDead = false;
 	
+	// UIウィジェットの初期化
+	InventoryWidget = nullptr;
+	MenuWidget = nullptr;
+	GameOverWidget = nullptr;
+	
 	// InputActionの初期設定（Blueprintでオーバーライド可能）
 	static ConstructorHelpers::FObjectFinder<UInputAction> DefaultOpenInventoryAction(TEXT("/Game/ThirdPerson/Input/Actions/IA_OpenInventory"));
 	if (DefaultOpenInventoryAction.Succeeded())

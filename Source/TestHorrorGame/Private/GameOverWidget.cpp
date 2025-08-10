@@ -85,12 +85,22 @@ void UGameOverWidget::OnRestartButtonClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("🔄 Restart button clicked"));
     
-    // ゲームを再開してから現在のレベルをリロード
+    // ゲームオーバー画面を削除
+    RemoveFromParent();
+    
+    // 入力モードを正常に戻してからレベルをリロード
     if (UWorld* World = GetWorld())
     {
         if (APlayerController* PlayerController = World->GetFirstPlayerController())
         {
+            // ゲームを再開
             PlayerController->SetPause(false);
+            
+            // 入力モードをゲームモードに戻す
+            PlayerController->bShowMouseCursor = false;
+            PlayerController->SetInputMode(FInputModeGameOnly());
+            
+            UE_LOG(LogTemp, Warning, TEXT("🎮 Input mode restored to Game Only"));
         }
         
         // 現在のレベル名を取得してリロード
@@ -106,15 +116,25 @@ void UGameOverWidget::OnMainMenuButtonClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("🏠 Main Menu button clicked"));
     
+    // ゲームオーバー画面を削除
+    RemoveFromParent();
+    
     // ゲームを再開してからメインメニューレベルに移動
     if (UWorld* World = GetWorld())
     {
         if (APlayerController* PlayerController = World->GetFirstPlayerController())
         {
             PlayerController->SetPause(false);
+            
+            // 入力モードをUIモードに設定（メインメニュー用）
+            PlayerController->bShowMouseCursor = true;
+            PlayerController->SetInputMode(FInputModeUIOnly());
+            
+            UE_LOG(LogTemp, Warning, TEXT("🎮 Input mode set to UI Only for Main Menu"));
         }
         
-        // メインメニューレベルを開く（必要に応じてレベル名を変更）
+        // メインメニューレベルを開く
+        UE_LOG(LogTemp, Warning, TEXT("🏠 Loading MainMenu level..."));
         UGameplayStatics::OpenLevel(this, TEXT("MainMenu"));
     }
 }
