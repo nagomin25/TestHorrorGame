@@ -12,7 +12,7 @@ AEnemyCharacter::AEnemyCharacter()
 	// デフォルト設定
 	WalkSpeed = 200.0f;
 	ChaseSpeed = 450.0f;
-	AttackRange = 150.0f;
+	AttackRange = 300.0f; // テスト用に拡大
 	AttackDamage = 20.0f;
 	AttackCooldown = 2.0f;
 	PatrolWaitTime = 3.0f;
@@ -27,6 +27,9 @@ AEnemyCharacter::AEnemyCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 300.0f, 0.0f);
+	
+	// Root Motion無効化（位置ずれ防止）
+	GetMesh()->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
 
 	// コリジョン設定
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
@@ -73,6 +76,12 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	// 攻撃可能かチェック
 	bCanAttack = CanPerformAttack();
+	
+	// 自動攻撃実行（Behavior Tree経由ではなく直接実行）
+	if (bCanAttack && CurrentState == EEnemyState::Chasing)
+	{
+		PerformAttack();
+	}
 
 	// アニメーション状態を更新
 	UpdateAnimationState();

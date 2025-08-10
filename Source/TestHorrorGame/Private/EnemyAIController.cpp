@@ -145,9 +145,10 @@ void AEnemyAIController::StartChasing(AActor* Target)
 
 		// 攻撃距離内かチェック
 		float DistanceToTarget = FVector::Dist(GetPawn()->GetActorLocation(), Target->GetActorLocation());
-		GetBlackboardComponent()->SetValueAsBool(CanAttack, DistanceToTarget <= 150.0f);
+		GetBlackboardComponent()->SetValueAsBool(CanAttack, DistanceToTarget <= 300.0f); // テスト用に拡大
 
-		UE_LOG(LogTemp, Warning, TEXT("🏃‍♂️ Enemy started chasing: %s (Distance: %.1f)"), *Target->GetName(), DistanceToTarget);
+		UE_LOG(LogTemp, Warning, TEXT("🏃‍♂️ Enemy started chasing: %s (Distance: %.1f) CanAttack: %s"), 
+			*Target->GetName(), DistanceToTarget, DistanceToTarget <= 300.0f ? TEXT("YES") : TEXT("NO"));
 	}
 }
 
