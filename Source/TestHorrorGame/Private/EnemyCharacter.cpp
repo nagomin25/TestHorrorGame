@@ -2,6 +2,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimEnums.h"
 #include "Engine/Engine.h"
 #include "../TestHorrorGameCharacter.h"
 
@@ -12,9 +15,9 @@ AEnemyCharacter::AEnemyCharacter()
 	// デフォルト設定
 	WalkSpeed = 200.0f;
 	ChaseSpeed = 450.0f;
-	AttackRange = 300.0f; // テスト用に拡大
+	AttackRange = 150.0f; // 密着攻撃用に縮小
 	AttackDamage = 20.0f;
-	AttackCooldown = 2.0f;
+	AttackCooldown = 3.0f; // クールダウンを3秒に延長
 	PatrolWaitTime = 3.0f;
 
 	// 初期状態
@@ -29,7 +32,8 @@ AEnemyCharacter::AEnemyCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 300.0f, 0.0f);
 	
 	// Root Motion無効化（位置ずれ防止）
-	GetMesh()->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
+	// UE5.5ではAnimBPで設定するため、ここではコメントアウト
+	// GetMesh()->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
 
 	// コリジョン設定
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
@@ -67,20 +71,102 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	// 基本的なデバッグ情報（毎フレーム）
+	static int32 TickCount = 0;
+	if (++TickCount % 120 == 0) // 2秒おきに表示
+	{
+		UE_LOG(LogTemp, Warning, TEXT("🎯 EnemyCharacter Tick - TargetPlayer: %s, CurrentState: %s"), 
+			TargetPlayer ? TEXT("FOUND") : TEXT("NONE"), 
+			*UEnum::GetValueAsString(CurrentState));
+	}
 
-	// ターゲットプレイヤーの取得
+	// ターゲットプレイヤーの取得と状態更新
 	if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
 	{
 		TargetPlayer = AIController->GetTargetPlayer();
+		
+		// AI Controllerのblackboardから状態を同期
+		if (UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent())
+		{
+			bool bIsChasing = BlackboardComp->GetValueAsBool(TEXT("IsChasing"));
+			bool bCanAttackBB = BlackboardComp->GetValueAsBool(TEXT("CanAttack"));
+			
+			// 状態を更新
+			if (bIsChasing && TargetPlayer)
+			{
+				if (CurrentState != EEnemyState::Chasing && CurrentState != EEnemyState::Attacking)
+				{
+					SetEnemyState(EEnemyState::Chasing);
+				}
+			}
+			else if (!bIsChasing && CurrentState == EEnemyState::Chasing)
+			{
+				SetEnemyState(EEnemyState::Idle);
+			}
+			
+			// デバッグログを減らす（必要時のみ表示）
+			// UE_LOG(LogTemp, Warning, TEXT("🔄 State Sync - BB_IsChasing: %s, BB_CanAttack: %s, CurrentState: %s"), 
+			//	bIsChasing ? TEXT("YES") : TEXT("NO"), 
+			//	bCanAttackBB ? TEXT("YES") : TEXT("NO"), 
+			//	*UEnum::GetValueAsString(CurrentState));
+		}
 	}
 
 	// 攻撃可能かチェック
 	bCanAttack = CanPerformAttack();
 	
-	// 自動攻撃実行（Behavior Tree経由ではなく直接実行）
-	if (bCanAttack && CurrentState == EEnemyState::Chasing)
+	// デバッグ情報を追加
+	if (TargetPlayer && CurrentState == EEnemyState::Chasing)
 	{
-		PerformAttack();
+		float Distance = GetDistanceToPlayer();
+		UE_LOG(LogTemp, Warning, TEXT("🔍 Debug - Distance: %.1f, bCanAttack: %s, CurrentState: %s"), 
+			Distance, bCanAttack ? TEXT("YES") : TEXT("NO"), *UEnum::GetValueAsString(CurrentState));
+	}
+	
+	// テスト用の簡単な攻撃コードを削除（正常に動作するため）
+	// if (TargetPlayer)
+	// {
+	//     float Distance = GetDistanceToPlayer();
+	//     if (Distance <= 500.0f)
+	//     {
+	//         UE_LOG(LogTemp, Warning, TEXT("🎯 SIMPLE ATTACK TEST - Distance: %.1f"), Distance);
+	//         PerformAttack();
+	//     }
+	// }
+	
+	// 視界内にいる間は常にプレイヤーの位置を追跡（攻撃時以外）
+	if (TargetPlayer && CurrentState != EEnemyState::Attacking)
+	{
+		// AIControllerのBlackboardを通じて最新のプレイヤー位置を更新
+		if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+		{
+			if (UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent())
+			{
+				// 現在の距離を計算
+				float CurrentDistance = GetDistanceToPlayer();
+				FVector PlayerCurrentLocation = TargetPlayer->GetActorLocation();
+				
+				// プレイヤーの位置を常に更新
+				BlackboardComp->SetValueAsVector(TEXT("LastKnownLocation"), PlayerCurrentLocation);
+				
+				// 追跡状態なら直接移動指示を出す
+				if (CurrentState == EEnemyState::Chasing)
+				{
+					AIController->MoveToLocation(PlayerCurrentLocation, 50.0f, true, true, true, true);
+				}
+				
+				// 攻撃距離内かどうかを常に更新
+				BlackboardComp->SetValueAsBool(TEXT("CanAttack"), CurrentDistance <= AttackRange);
+				
+				// 攻撃可能な場合のみ攻撃を実行
+				if (bCanAttack && CurrentState == EEnemyState::Chasing)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("🎯 About to perform attack! Distance: %.1f"), CurrentDistance);
+					PerformAttack();
+				}
+			}
+		}
 	}
 
 	// アニメーション状態を更新
@@ -142,18 +228,25 @@ void AEnemyCharacter::PerformAttack()
 	SetEnemyState(EEnemyState::Attacking);
 	LastAttackTime = GetWorld()->GetTimeSeconds();
 
-	UE_LOG(LogTemp, Warning, TEXT("⚔️ Enemy performing attack!"));
+	UE_LOG(LogTemp, Warning, TEXT("⚔️ Enemy starting attack animation!"));
 
-	// プレイヤーにダメージを与える
-	if (TargetPlayer)
+	// 攻撃アニメーションの途中でダメージを与える（タイマーで実装）
+	FTimerHandle AttackDamageTimer;
+	GetWorld()->GetTimerManager().SetTimer(AttackDamageTimer, [this]()
 	{
-		DealDamageToPlayer(TargetPlayer);
-	}
+		// アニメーション中にダメージを与える
+		if (TargetPlayer && CurrentState == EEnemyState::Attacking)
+		{
+			UE_LOG(LogTemp, Error, TEXT("⚔️ Attack animation hitting - dealing damage now!"));
+			DealDamageToPlayer(TargetPlayer);
+		}
+	}, 0.8f, false); // アニメーションの8割程度で攻撃判定
 
-	// アニメーション実行後にアイドル状態に戻る（タイマーで実装）
-	FTimerHandle AttackTimer;
-	GetWorld()->GetTimerManager().SetTimer(AttackTimer, [this]()
+	// アニメーション実行後にチェイス状態に戻る（タイマーで実装）
+	FTimerHandle AttackEndTimer;
+	GetWorld()->GetTimerManager().SetTimer(AttackEndTimer, [this]()
 	{
+		UE_LOG(LogTemp, Warning, TEXT("⚔️ Attack animation finished, returning to chase"));
 		SetEnemyState(EEnemyState::Chasing);
 	}, 1.5f, false);
 }
@@ -165,12 +258,17 @@ void AEnemyCharacter::DealDamageToPlayer(AActor* Player)
 	// プレイヤーにダメージを与える処理
 	if (ATestHorrorGameCharacter* HorrorPlayer = Cast<ATestHorrorGameCharacter>(Player))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("💥 Enemy dealt %.1f damage to player!"), AttackDamage);
+		UE_LOG(LogTemp, Error, TEXT("💥 Enemy dealing %.1f damage to player!"), AttackDamage);
 		
-		// 実際のダメージシステムを実装する場合はここに追加
-		// 例：HorrorPlayer->TakeDamage(AttackDamage);
+		// プレイヤーのダメージ処理を実行 - ホラーゲームなので即死
+		HorrorPlayer->TakeDamage(AttackDamage);
 		
 		// 視覚効果やサウンド再生もここで実装可能
+		UE_LOG(LogTemp, Error, TEXT("🎯 Player has been attacked! Game should be over now."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("❌ Player cast failed - cannot deal damage"));
 	}
 }
 
@@ -196,12 +294,25 @@ void AEnemyCharacter::DebugCurrentState() const
 
 bool AEnemyCharacter::CanPerformAttack() const
 {
-	if (!TargetPlayer) return false;
-	if (CurrentState == EEnemyState::Attacking || CurrentState == EEnemyState::Stunned) return false;
+	if (!TargetPlayer) 
+	{
+		return false;
+	}
+	if (CurrentState == EEnemyState::Attacking || CurrentState == EEnemyState::Stunned) 
+	{
+		return false;
+	}
 	
 	float Distance = GetDistanceToPlayer();
 	bool bInRange = Distance <= AttackRange && Distance > 0.0f;
 	bool bCooldownReady = GetWorld()->GetTimeSeconds() - LastAttackTime >= AttackCooldown;
+
+	// デバッグ情報を減らして、重要な情報のみ表示
+	if (!bCooldownReady)
+	{
+		float RemainingCooldown = AttackCooldown - (GetWorld()->GetTimeSeconds() - LastAttackTime);
+		UE_LOG(LogTemp, Warning, TEXT("⏰ Attack cooldown: %.1f seconds remaining"), RemainingCooldown);
+	}
 
 	return bInRange && bCooldownReady;
 }
@@ -209,28 +320,52 @@ bool AEnemyCharacter::CanPerformAttack() const
 void AEnemyCharacter::UpdateAnimationState()
 {
 	UHorrorCharacterAnimInstance* AnimInstance = GetHorrorAnimInstance();
-	if (!AnimInstance) return;
+	if (!AnimInstance) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("❌ AnimInstance is null in UpdateAnimationState"));
+		return;
+	}
 
-	// 敵キャラクターのアニメーション状態を設定
+	// 移動速度を取得
+	FVector Velocity = GetVelocity();
+	float CurrentSpeed = Velocity.Size();
+	
+	// 既存のプロパティに直接値を設定
+	AnimInstance->Speed = CurrentSpeed;
+	AnimInstance->bIsMoving = CurrentSpeed > 5.0f; // 5ユニット/秒以上で移動中（閾値を下げる）
+
+	// デバッグログを追加 - アニメーション値の確認
+	static int32 AnimDebugCount = 0;
+	if (++AnimDebugCount % 60 == 0) // 1秒おきに表示
+	{
+		UE_LOG(LogTemp, Warning, TEXT("🎬 Animation Debug - Speed: %.2f, bIsMoving: %s, CurrentState: %s"), 
+			CurrentSpeed, 
+			AnimInstance->bIsMoving ? TEXT("TRUE") : TEXT("FALSE"),
+			*UEnum::GetValueAsString(CurrentState));
+	}
+
+	// 敵キャラクターのアクション状態を設定
 	switch (CurrentState)
 	{
 		case EEnemyState::Idle:
-			// アイドルアニメーション
+			// アイドル状態 - 移動速度で自動判定される
+			AnimInstance->SetActionState(EHorrorActionState::None);
 			break;
 
 		case EEnemyState::Patrolling:
 		case EEnemyState::Chasing:
-			// 移動アニメーション
+			// 移動アニメーション - 移動速度で自動判定される
+			AnimInstance->SetActionState(EHorrorActionState::None);
 			break;
 
 		case EEnemyState::Attacking:
 			// 攻撃アニメーション
-			AnimInstance->SetActionState(EHorrorActionState::Interacting); // 一時的に使用
+			AnimInstance->SetActionState(EHorrorActionState::Interacting);
 			break;
 
 		case EEnemyState::Stunned:
 			// スタンアニメーション
-			AnimInstance->SetActionState(EHorrorActionState::Grabbed); // 一時的に使用
+			AnimInstance->SetActionState(EHorrorActionState::Grabbed);
 			break;
 	}
 }

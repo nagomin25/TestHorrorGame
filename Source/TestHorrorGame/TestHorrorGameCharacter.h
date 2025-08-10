@@ -8,6 +8,7 @@
 #include "InventoryComponent.h"
 #include "InventoryWidget.h"
 #include "MenuWidget.h"
+#include "GameOverWidget.h"
 #include "TestHorrorGameCharacter.generated.h"
 
 class USpringArmComponent;
@@ -77,6 +78,14 @@ public:
 	UPROPERTY()
 	UMenuWidget* MenuWidget;
 
+	// ゲームオーバーUIのクラス（Blueprintをアサイン）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UGameOverWidget> GameOverWidgetClass;
+
+	// ゲームオーバーウィジェットの実体
+	UPROPERTY()
+	UGameOverWidget* GameOverWidget;
+
 	// 表示／非表示用関数
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
@@ -92,6 +101,32 @@ public:
 	// 現在インタラクト可能なアイテム
 	UPROPERTY()
 	TArray<class AItemActor*> InteractableItems;
+
+	// === ダメージシステム ===
+	
+	// プレイヤーの体力（現在は1で設定、攻撃を受けたら即死）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
+	float Health;
+	
+	// 最大体力
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
+	float MaxHealth;
+	
+	// 死亡フラグ
+	UPROPERTY(BlueprintReadOnly, Category="Health")
+	bool bIsDead;
+	
+	// ダメージを受ける関数
+	UFUNCTION(BlueprintCallable, Category="Health")
+	void TakeDamage(float DamageAmount);
+	
+	// 死亡処理関数
+	UFUNCTION(BlueprintCallable, Category="Health")
+	void Die();
+	
+	// ゲームオーバー処理関数
+	UFUNCTION(BlueprintCallable, Category="Health")
+	void GameOver();
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)

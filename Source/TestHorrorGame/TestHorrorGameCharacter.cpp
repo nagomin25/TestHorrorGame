@@ -28,6 +28,11 @@ ATestHorrorGameCharacter::ATestHorrorGameCharacter()
 	// コンポーネントを作成してアタッチ
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
+	// ダメージシステムの初期化
+	MaxHealth = 1.0f; // ホラーゲームなので1発で死亡
+	Health = MaxHealth;
+	bIsDead = false;
+	
 	// InputActionの初期設定（Blueprintでオーバーライド可能）
 	static ConstructorHelpers::FObjectFinder<UInputAction> DefaultOpenInventoryAction(TEXT("/Game/ThirdPerson/Input/Actions/IA_OpenInventory"));
 	if (DefaultOpenInventoryAction.Succeeded())
@@ -468,5 +473,93 @@ void ATestHorrorGameCharacter::Interact()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("❌ No valid items to interact with"));
+	}
+}
+
+// === ダメージシステム実装 ===
+
+void ATestHorrorGameCharacter::TakeDamage(float DamageAmount)
+{
+	if (bIsDead)
+	{
+		return; // 既に死亡している場合は処理しない
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("💀 Player taking damage: %.1f"), DamageAmount);
+	
+	Health -= DamageAmount;
+	
+	if (Health <= 0.0f)
+	{
+		Health = 0.0f;
+		Die();
+	}
+}
+
+void ATestHorrorGameCharacter::Die()
+{
+	if (bIsDead)
+	{
+		return; // 既に死亡している場合は重複処理を防ぐ
+	}
+
+	bIsDead = true;
+	UE_LOG(LogTemp, Error, TEXT("💀💀💀 PLAYER DIED! 💀💀💀"));
+	
+	// 移動を無効化
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->DisableMovement();
+	}
+	
+	// 入力を無効化
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		DisableInput(PC);
+	}
+	
+	// ゲームオーバー処理
+	GameOver();
+}
+
+void ATestHorrorGameCharacter::GameOver()
+{
+	UE_LOG(LogTemp, Error, TEXT("🎮 GAME OVER! 🎮"));
+	
+	// ゲームオーバーウィジェットを表示
+	if (GameOverWidgetClass && !GameOverWidget)
+	{
+		GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), GameOverWidgetClass);
+		if (GameOverWidget)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("💀 GameOverWidget created successfully"));
+			GameOverWidget->ShowGameOver();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ Failed to create GameOverWidget"));
+		}
+	}
+	else if (GameOverWidget)
+	{
+		// 既に作成済みの場合は表示
+		GameOverWidget->ShowGameOver();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ GameOverWidgetClass is not assigned in Blueprint"));
+		
+		// フォールバック: 基本的なゲームオーバー処理
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			PC->SetPause(true);
+			PC->bShowMouseCursor = true;
+			PC->SetInputMode(FInputModeUIOnly());
+			
+			UE_LOG(LogTemp, Error, TEXT("===== GAME OVER ====="));
+			UE_LOG(LogTemp, Error, TEXT("The enemy has caught you!"));
+			UE_LOG(LogTemp, Error, TEXT("GameOverWidgetClass not assigned"));
+			UE_LOG(LogTemp, Error, TEXT("===================="));
+		}
 	}
 }

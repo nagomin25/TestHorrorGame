@@ -18,15 +18,15 @@ AEnemyAIController::AEnemyAIController()
 	// AI Perception Component
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 
-	// Sight Configuration
+	// Sight Configuration - より賢い追跡設定
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 	if (SightConfig)
 	{
-		SightConfig->SightRadius = 1200.0f;
-		SightConfig->LoseSightRadius = 1300.0f;
-		SightConfig->PeripheralVisionAngleDegrees = 90.0f;
-		SightConfig->SetMaxAge(5.0f);
-		SightConfig->AutoSuccessRangeFromLastSeenLocation = 300.0f;
+		SightConfig->SightRadius = 2000.0f;          // 視界距離を拡大
+		SightConfig->LoseSightRadius = 2200.0f;      // 見失う距離も拡大
+		SightConfig->PeripheralVisionAngleDegrees = 120.0f; // 視野角を拡大
+		SightConfig->SetMaxAge(10.0f);               // 記憶時間を大幅延長
+		SightConfig->AutoSuccessRangeFromLastSeenLocation = 800.0f; // 最後に見た位置周辺での自動検出を拡大
 		
 		// Player detection
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
@@ -113,23 +113,51 @@ void AEnemyAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActor
 			FActorPerceptionBlueprintInfo Info;
 			AIPerceptionComponent->GetActorsPerception(Actor, Info);
 
+			bool bPlayerCurrentlyVisible = false;
 			for (const FAIStimulus& Stimulus : Info.LastSensedStimuli)
 			{
 				if (Stimulus.WasSuccessfullySensed())
 				{
-					UE_LOG(LogTemp, Warning, TEXT("👁️ Enemy detected player: %s"), *Player->GetName());
+					bPlayerCurrentlyVisible = true;
+					
+					// プレイヤーが視界内にいる場合
+					if (!GetBlackboardComponent()->GetValueAsBool(IsChasing))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("👁️ Enemy detected player: %s"), *Player->GetName());
+					}
+					
 					StartChasing(Player);
 					
-					// プレイヤーの位置を更新
-					GetBlackboardComponent()->SetValueAsVector(LastKnownLocationKey, Player->GetActorLocation());
+					// プレイヤーの現在位置を毎フレーム更新（視界内にいる限り）
+					FVector PlayerCurrentLocation = Player->GetActorLocation();
+					GetBlackboardComponent()->SetValueAsVector(LastKnownLocationKey, PlayerCurrentLocation);
+					
+					// リアルタイムで直接プレイヤーに向かって移動
+					MoveToLocation(PlayerCurrentLocation, 50.0f, true, true, true, true);
+					
+					// 攻撃距離の更新（密着攻撃用に縮小）
+					float DistanceToTarget = FVector::Dist(GetPawn()->GetActorLocation(), PlayerCurrentLocation);
+					GetBlackboardComponent()->SetValueAsBool(CanAttack, DistanceToTarget <= 150.0f);
+					
+					// デバッグログ - より詳細な追跡情報
+					static int32 TrackingLogCount = 0;
+					if (++TrackingLogCount % 60 == 0) // 1秒おきに表示
+					{
+						UE_LOG(LogTemp, Warning, TEXT("🎯 Continuously tracking player - Distance: %.1f, Moving to: %s"), 
+							DistanceToTarget, *PlayerCurrentLocation.ToString());
+					}
+					
+					break; // プレイヤーを発見したらループを抜ける
 				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("👁️ Enemy lost sight of player"));
-					// プレイヤーを見失った場合の処理
-					GetBlackboardComponent()->SetValueAsObject(TargetPlayerKey, nullptr);
-					GetBlackboardComponent()->SetValueAsBool(IsChasing, false);
-				}
+			}
+			
+			if (!bPlayerCurrentlyVisible)
+			{
+				// プレイヤーを見失った場合 - ただし記憶時間内は追跡継続
+				UE_LOG(LogTemp, Warning, TEXT("👁️ Enemy lost sight of player - but continuing pursuit to last known location"));
+				
+				// 見失ってもすぐには追跡を停止しない（記憶時間に依存）
+				// Blackboardの値は維持し、Behavior Treeで最後の位置への移動を継続
 			}
 		}
 	}
@@ -143,12 +171,12 @@ void AEnemyAIController::StartChasing(AActor* Target)
 		GetBlackboardComponent()->SetValueAsBool(IsChasing, true);
 		GetBlackboardComponent()->SetValueAsVector(LastKnownLocationKey, Target->GetActorLocation());
 
-		// 攻撃距離内かチェック
+		// 攻撃距離内かチェック（密着攻撃用に縮小）
 		float DistanceToTarget = FVector::Dist(GetPawn()->GetActorLocation(), Target->GetActorLocation());
-		GetBlackboardComponent()->SetValueAsBool(CanAttack, DistanceToTarget <= 300.0f); // テスト用に拡大
+		GetBlackboardComponent()->SetValueAsBool(CanAttack, DistanceToTarget <= 150.0f);
 
 		UE_LOG(LogTemp, Warning, TEXT("🏃‍♂️ Enemy started chasing: %s (Distance: %.1f) CanAttack: %s"), 
-			*Target->GetName(), DistanceToTarget, DistanceToTarget <= 300.0f ? TEXT("YES") : TEXT("NO"));
+			*Target->GetName(), DistanceToTarget, DistanceToTarget <= 150.0f ? TEXT("YES") : TEXT("NO"));
 	}
 }
 
