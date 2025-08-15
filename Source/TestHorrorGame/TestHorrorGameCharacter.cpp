@@ -15,6 +15,7 @@
 #include "InventoryWidget.h"
 #include "MenuWidget.h"
 #include "ItemActor.h"
+#include "DoorActor.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -411,17 +412,19 @@ void ATestHorrorGameCharacter::Interact()
 {
 	UE_LOG(LogTemp, Warning, TEXT("🔍 Interact called!"));
 	UE_LOG(LogTemp, Warning, TEXT("📋 InteractableItems count: %d"), InteractableItems.Num());
+	UE_LOG(LogTemp, Warning, TEXT("🚪 InteractableDoors count: %d"), InteractableDoors.Num());
 	
-	// インタラクト可能なアイテムがあるかチェック
-	if (InteractableItems.Num() == 0)
+	// インタラクト可能なオブジェクトがあるかチェック
+	if (InteractableItems.Num() == 0 && InteractableDoors.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("❌ No interactable items nearby"));
+		UE_LOG(LogTemp, Warning, TEXT("❌ No interactable objects nearby"));
 		return;
 	}
 	
-	// 前方のアイテムを優先
+	// 前方のオブジェクトを優先
 	float ClosestDistance = FLT_MAX;
 	AItemActor* ClosestItem = nullptr;
+	ADoorActor* ClosestDoor = nullptr;
 	
 	FVector PlayerLocation = GetActorLocation();
 	FVector PlayerForward = GetActorForwardVector();
@@ -440,17 +443,43 @@ void ATestHorrorGameCharacter::Interact()
 		ToItem.Normalize();
 		float DotProduct = FVector::DotProduct(PlayerForward, ToItem);
 		
-		// 前方60度以内（cos(60°) = 0.5）で最も近いアイテムを選択
+		// 前方60度以内（cos(60°) = 0.5）で最も近いオブジェクトを選択
 		if (DotProduct > 0.5f && Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
 			ClosestItem = Item;
+			ClosestDoor = nullptr; // アイテムが優先された場合はドアをクリア
 		}
 	}
 	
-	// 前方にアイテムがない場合は、最も近いアイテムを選択
-	if (!ClosestItem && InteractableItems.Num() > 0)
+	// ドアをチェック
+	for (ADoorActor* Door : InteractableDoors)
 	{
+		if (!IsValid(Door) || !Door->bCanInteract)
+		{
+			continue;
+		}
+		
+		FVector ToDoor = Door->GetActorLocation() - PlayerLocation;
+		float Distance = ToDoor.Size();
+		
+		// 前方のドアを優先（内積を使用）
+		ToDoor.Normalize();
+		float DotProduct = FVector::DotProduct(PlayerForward, ToDoor);
+		
+		// 前方60度以内（cos(60°) = 0.5）で最も近いオブジェクトを選択
+		if (DotProduct > 0.5f && Distance < ClosestDistance)
+		{
+			ClosestDistance = Distance;
+			ClosestDoor = Door;
+			ClosestItem = nullptr; // ドアが優先された場合はアイテムをクリア
+		}
+	}
+	
+	// 前方にオブジェクトがない場合は、最も近いものを選択
+	if (!ClosestItem && !ClosestDoor)
+	{
+		// アイテムから最も近いものを探す
 		for (AItemActor* Item : InteractableItems)
 		{
 			if (!IsValid(Item) || !Item->bCanInteract)
@@ -463,11 +492,29 @@ void ATestHorrorGameCharacter::Interact()
 			{
 				ClosestDistance = Distance;
 				ClosestItem = Item;
+				ClosestDoor = nullptr;
+			}
+		}
+		
+		// ドアから最も近いものを探す
+		for (ADoorActor* Door : InteractableDoors)
+		{
+			if (!IsValid(Door) || !Door->bCanInteract)
+			{
+				continue;
+			}
+			
+			float Distance = FVector::Dist(Door->GetActorLocation(), PlayerLocation);
+			if (Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestDoor = Door;
+				ClosestItem = nullptr;
 			}
 		}
 	}
 	
-	// 最も近いアイテムとインタラクト
+	// 最も近いオブジェクトとインタラクト
 	if (ClosestItem)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("📦 Interacting with item: %s"), *ClosestItem->ItemData.Name.ToString());
@@ -475,19 +522,24 @@ void ATestHorrorGameCharacter::Interact()
 		// 取得後はリストから削除
 		InteractableItems.Remove(ClosestItem);
 	}
+	else if (ClosestDoor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("🚪 Interacting with door"));
+		ClosestDoor->Interact(this);
+	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("❌ No valid items to interact with"));
+		UE_LOG(LogTemp, Warning, TEXT("❌ No valid object to interact with"));
 	}
 }
 
 // === ダメージシステム実装 ===
 
-void ATestHorrorGameCharacter::TakeDamage(float DamageAmount)
+float ATestHorrorGameCharacter::TakeDamage(float DamageAmount, const struct FDamageEvent& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
 	if (bIsDead)
 	{
-		return; // 既に死亡している場合は処理しない
+		return 0.0f; // 既に死亡している場合は処理しない
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("💀 Player taking damage: %.1f"), DamageAmount);
@@ -499,6 +551,8 @@ void ATestHorrorGameCharacter::TakeDamage(float DamageAmount)
 		Health = 0.0f;
 		Die();
 	}
+	
+	return DamageAmount;
 }
 
 void ATestHorrorGameCharacter::Die()

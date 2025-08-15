@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimEnums.h"
 #include "Engine/Engine.h"
+#include "Engine/DamageEvents.h"
 #include "../TestHorrorGameCharacter.h"
 
 AEnemyCharacter::AEnemyCharacter()
@@ -261,7 +262,8 @@ void AEnemyCharacter::DealDamageToPlayer(AActor* Player)
 		UE_LOG(LogTemp, Error, TEXT("💥 Enemy dealing %.1f damage to player!"), AttackDamage);
 		
 		// プレイヤーのダメージ処理を実行 - ホラーゲームなので即死
-		HorrorPlayer->TakeDamage(AttackDamage);
+		FDamageEvent DamageEvent;
+		HorrorPlayer->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 		
 		// 視覚効果やサウンド再生もここで実装可能
 		UE_LOG(LogTemp, Error, TEXT("🎯 Player has been attacked! Game should be over now."));

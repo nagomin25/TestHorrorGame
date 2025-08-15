@@ -51,12 +51,6 @@ void AItemActor::BeginPlay()
 	PickupSphere->OnComponentBeginOverlap.AddDynamic(this, &AItemActor::OnOverlapBegin);
 	PickupSphere->OnComponentEndOverlap.AddDynamic(this, &AItemActor::OnOverlapEnd);
 	
-	// デバッグ用：コリジョン球を可視化（開発中のみ）
-	#if WITH_EDITOR
-	PickupSphere->SetHiddenInGame(false);
-	PickupSphere->SetVisibility(true);
-	UE_LOG(LogTemp, Warning, TEXT("🔍 アイテム「%s」のPickupSphere半径: %.1f"), *ItemData.Name.ToString(), PickupSphere->GetScaledSphereRadius());
-	#endif
 }
 
 void AItemActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,

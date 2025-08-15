@@ -10,7 +10,35 @@
     <list default="true" id="438933db-c248-4043-9ce2-88f2ffc6ee52" name="変更" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TestHorrorGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TestHorrorGame.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Level/testWorld.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/testWorld.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/RetroGraphics/FBX/key.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/RetroGraphics/FBX/key.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_box.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_box.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_key.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_key.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPBlueprintCommands.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPBlueprintNodeCommands.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPCommonUtils.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPEditorCommands.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPProjectCommands.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPUMGCommands.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/MCPServerRunnable.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/UnrealMCPBridge.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/UnrealMCPModule.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPBlueprintCommands.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPBlueprintNodeCommands.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPCommonUtils.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPEditorCommands.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPProjectCommands.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPUMGCommands.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/MCPServerRunnable.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/UnrealMCPBridge.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/UnrealMCPModule.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/UnrealMCP.Build.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/UnrealMCP.uplugin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/EnemyCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/EnemyCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/InventoryComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/InventoryComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/ItemActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/ItemActor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Public/InventoryComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Public/InventoryComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +60,10 @@
     &quot;accountId&quot;: &quot;095d07cb-6163-4341-9cf9-9dd245eb0107&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock://diff.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://diff.h" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -40,30 +72,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Uproject.TestHorrorGame.executor": "Run",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Uproject.TestHorrorGame.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="TestHorrorGame" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
         <option name="CONFIGURATION" value="DebugGame Editor" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Win64-DebugGame.exe" />
+        <option name="EXECUTABLE_PATH" value="C:/Program Files/Epic Games/UE_5.5/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;D:\UEProjects\TestHorrorGame\TestHorrorGame.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -76,7 +112,7 @@
         <option name="CONFIGURATION" value="DebugGame" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="D:\UEProjects\TestHorrorGame\Binaries\Win64\TestHorrorGame-Win64-DebugGame.exe" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/Binaries/Win64/TestHorrorGame-Win64-DebugGame.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -89,7 +125,7 @@
         <option name="CONFIGURATION" value="Development Editor" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor.exe" />
+        <option name="EXECUTABLE_PATH" value="C:/Program Files/Epic Games/UE_5.5/Engine/Binaries/Win64/UnrealEditor.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;D:\UEProjects\TestHorrorGame\TestHorrorGame.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -102,7 +138,7 @@
         <option name="CONFIGURATION" value="Development" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="D:\UEProjects\TestHorrorGame\Binaries\Win64\TestHorrorGame.exe" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/Binaries/Win64/TestHorrorGame.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -115,7 +151,7 @@
         <option name="CONFIGURATION" value="Shipping" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="D:\UEProjects\TestHorrorGame\Binaries\Win64\TestHorrorGame-Win64-Shipping.exe" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/Binaries/Win64/TestHorrorGame-Win64-Shipping.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -144,6 +180,18 @@
       <workItem from="1753612560007" duration="15000" />
       <workItem from="1753614824381" duration="2000" />
       <workItem from="1753614836916" duration="3017000" />
+      <workItem from="1755257475710" duration="131000" />
+      <workItem from="1755263188309" duration="115000" />
+      <workItem from="1755263326965" duration="274000" />
+      <workItem from="1755263625572" duration="36000" />
+      <workItem from="1755263705588" duration="50000" />
+      <workItem from="1755263778909" duration="55000" />
+      <workItem from="1755263855964" duration="185000" />
+      <workItem from="1755264059694" duration="203000" />
+      <workItem from="1755264286803" duration="382000" />
+      <workItem from="1755264688479" duration="2117000" />
+      <workItem from="1755296198569" duration="977000" />
+      <workItem from="1755298684068" duration="957000" />
     </task>
     <servers />
   </component>
@@ -151,6 +199,17 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
@@ -171,5 +230,9 @@
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

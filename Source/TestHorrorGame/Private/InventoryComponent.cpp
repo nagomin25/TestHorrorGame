@@ -29,6 +29,18 @@ bool UInventoryComponent::AddItem(const FItemData& NewItem, int32 Count)
 	return true;
 }
 
+bool UInventoryComponent::HasItem(const FName& ItemID) const
+{
+	for (const FInventorySlot& Slot : Inventory)
+	{
+		if (Slot.Item.ItemID == ItemID && Slot.Count > 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 // Called when the game starts
 void UInventoryComponent::BeginPlay()

@@ -16,6 +16,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class ADoorActor;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -102,6 +103,10 @@ public:
 	UPROPERTY()
 	TArray<class AItemActor*> InteractableItems;
 
+	// 現在インタラクト可能なドア
+	UPROPERTY()
+	TArray<class ADoorActor*> InteractableDoors;
+
 	// === ダメージシステム ===
 	
 	// プレイヤーの体力（現在は1で設定、攻撃を受けたら即死）
@@ -118,7 +123,7 @@ public:
 	
 	// ダメージを受ける関数
 	UFUNCTION(BlueprintCallable, Category="Health")
-	void TakeDamage(float DamageAmount);
+	virtual float TakeDamage(float DamageAmount, const struct FDamageEvent& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	
 	// 死亡処理関数
 	UFUNCTION(BlueprintCallable, Category="Health")

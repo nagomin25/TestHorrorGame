@@ -36,6 +36,10 @@ public:
     UFUNCTION(BlueprintCallable, Category="Inventory")
     bool AddItem(const FItemData& NewItem, int32 Count = 1);
 
+    // アイテムを持っているかチェックする関数
+    UFUNCTION(BlueprintCallable, Category="Inventory")
+    bool HasItem(const FName& ItemID) const;
+
 protected:
     // Called when the game starts
     virtual void BeginPlay() override;
