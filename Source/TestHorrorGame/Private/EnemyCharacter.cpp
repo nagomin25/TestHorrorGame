@@ -1,7 +1,6 @@
 #include "EnemyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/ArrowComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimEnums.h"
@@ -42,11 +41,6 @@ AEnemyCharacter::AEnemyCharacter()
 	// メッシュの向きを修正（SurvivorBは90度回転が必要）
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	
-	// Arrow Componentの向きも修正
-	if (GetArrowComponent())
-	{
-		GetArrowComponent()->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
-	}
 
 	// AIControllerを設定
 	AIControllerClass = AEnemyAIController::StaticClass();

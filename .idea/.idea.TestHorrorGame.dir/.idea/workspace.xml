@@ -9,41 +9,16 @@
   <component name="ChangeListManager">
     <list default="true" id="438933db-c248-4043-9ce2-88f2ffc6ee52" name="変更" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TestHorrorGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TestHorrorGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Level/testWorld.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/testWorld.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/RetroGraphics/FBX/key.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/RetroGraphics/FBX/key.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_box.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_box.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_key.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_key.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPBlueprintCommands.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPBlueprintNodeCommands.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPCommonUtils.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPEditorCommands.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPProjectCommands.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/Commands/UnrealMCPUMGCommands.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/MCPServerRunnable.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/UnrealMCPBridge.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Private/UnrealMCPModule.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPBlueprintCommands.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPBlueprintNodeCommands.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPCommonUtils.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPEditorCommands.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPProjectCommands.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/Commands/UnrealMCPUMGCommands.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/MCPServerRunnable.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/UnrealMCPBridge.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/Public/UnrealMCPModule.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/Source/UnrealMCP/UnrealMCP.Build.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UnrealMCP/UnrealMCP.uplugin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/EnemyCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/EnemyCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/InventoryComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/InventoryComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/ItemActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/ItemActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Public/InventoryComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Public/InventoryComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/TestHorrorGameCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/TestHorrorGame/Private/DoorActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/TestHorrorGame/Private/DoorActor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestHorrorGame.code-workspace" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -64,6 +39,7 @@
     <setting file="mock://diff.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://diff.h" root0="SKIP_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -88,7 +64,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -192,12 +168,32 @@
       <workItem from="1755264688479" duration="2117000" />
       <workItem from="1755296198569" duration="977000" />
       <workItem from="1755298684068" duration="957000" />
+      <workItem from="1755299705130" duration="97000" />
+      <workItem from="1755299890725" duration="150000" />
+      <workItem from="1755303084269" duration="60000" />
+      <workItem from="1755320574241" duration="670000" />
+      <workItem from="1755331930341" duration="41000" />
+      <workItem from="1755331985223" duration="95000" />
+      <workItem from="1755334729592" duration="1067000" />
+      <workItem from="1755403340741" duration="3123000" />
+      <workItem from="1755425734742" duration="2143000" />
+      <workItem from="1755877917210" duration="1589000" />
     </task>
+    <task id="LOCAL-00001" summary="鍵での扉明オープン機能の実装">
+      <option name="closed" value="true" />
+      <created>1755299785734</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1755299785734</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -212,6 +208,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="鍵での扉明オープン機能の実装" />
+    <option name="LAST_COMMIT_MESSAGE" value="鍵での扉明オープン機能の実装" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

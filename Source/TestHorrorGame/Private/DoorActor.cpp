@@ -18,6 +18,7 @@ ADoorActor::ADoorActor()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultDoorMesh(TEXT("/Game/PSXSurvivalHorrorFBX/PSXSurvivalHorrorFBX/MESH-Door"));
 	if (DefaultDoorMesh.Succeeded())
 	{
+		
 		DoorMesh->SetStaticMesh(DefaultDoorMesh.Object);
 		UE_LOG(LogTemp, Warning, TEXT("✅ Default door mesh assigned"));
 	}
