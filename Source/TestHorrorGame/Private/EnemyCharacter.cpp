@@ -167,22 +167,18 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	// アニメーション状態を更新
 	UpdateAnimationState();
 
-	// デバッグ情報（開発用）
-	if (GEngine && CurrentState == EEnemyState::Chasing && TargetPlayer)
-	{
-		float Distance = GetDistanceToPlayer();
-		GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, 
-			FString::Printf(TEXT("Enemy: %s | Distance: %.1f | Can Attack: %s"), 
-				*UEnum::GetValueAsString(CurrentState), 
-				Distance, 
-				bCanAttack ? TEXT("Yes") : TEXT("No")
-			));
-	}
+	// デバッグ情報は無効化
 }
 
 void AEnemyCharacter::SetEnemyState(EEnemyState NewState)
 {
 	if (CurrentState == NewState) return;
+
+	// オブジェクトの有効性を確認
+	if (!IsValid(this) || !GetCharacterMovement())
+	{
+		return;
+	}
 
 	EEnemyState PreviousState = CurrentState;
 	CurrentState = NewState;
@@ -210,10 +206,6 @@ void AEnemyCharacter::SetEnemyState(EEnemyState NewState)
 			GetCharacterMovement()->MaxWalkSpeed = 0.0f; // スタン中は停止
 			break;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("👹 Enemy state changed: %s → %s"), 
-		*UEnum::GetValueAsString(PreviousState), 
-		*UEnum::GetValueAsString(NewState));
 }
 
 void AEnemyCharacter::PerformAttack()
@@ -229,19 +221,23 @@ void AEnemyCharacter::PerformAttack()
 	FTimerHandle AttackDamageTimer;
 	GetWorld()->GetTimerManager().SetTimer(AttackDamageTimer, [this]()
 	{
+		// オブジェクトの有効性確認
+		if (!IsValid(this)) return;
+		
 		// アニメーション中にダメージを与える
 		if (TargetPlayer && CurrentState == EEnemyState::Attacking)
 		{
-			UE_LOG(LogTemp, Error, TEXT("⚔️ Attack animation hitting - dealing damage now!"));
 			DealDamageToPlayer(TargetPlayer);
 		}
-	}, 0.8f, false); // アニメーションの8割程度で攻撃判定
+	}, 0.8f, false);
 
 	// アニメーション実行後にチェイス状態に戻る（タイマーで実装）
 	FTimerHandle AttackEndTimer;
 	GetWorld()->GetTimerManager().SetTimer(AttackEndTimer, [this]()
 	{
-		UE_LOG(LogTemp, Warning, TEXT("⚔️ Attack animation finished, returning to chase"));
+		// オブジェクトの有効性確認
+		if (!IsValid(this)) return;
+		
 		SetEnemyState(EEnemyState::Chasing);
 	}, 1.5f, false);
 }

@@ -19,22 +19,26 @@ public:
     // メインメニューを表示
     UFUNCTION(BlueprintCallable)
     void ShowMainMenu();
+    
+    // デバッグ用：全ての子ウィジェット名を出力
+    UFUNCTION(BlueprintCallable)
+    void DebugPrintAllWidgetNames();
 
 protected:
     // タイトルテキスト
-    UPROPERTY(meta = (BindWidget))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     UTextBlock* TitleText;
 
     // ゲーム開始ボタン
-    UPROPERTY(meta = (BindWidget))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     UButton* StartGameButton;
 
     // 設定ボタン
-    UPROPERTY(meta = (BindWidget))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     UButton* SettingsButton;
 
     // 終了ボタン
-    UPROPERTY(meta = (BindWidget))
+    UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
     UButton* QuitButton;
 
 private:

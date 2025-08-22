@@ -6,12 +6,133 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/Engine.h"
+#include "Blueprint/WidgetTree.h"
 
 void UMainMenuWidget::NativeConstruct()
 {
     Super::NativeConstruct();
     
     UE_LOG(LogTemp, Warning, TEXT("🔍 MainMenuWidget NativeConstruct started"));
+    
+    // BindWidgetが失敗した場合の代替手段として手動でウィジェットを検索
+    if (!StartGameButton)
+    {
+        // 複数の可能な名前で検索
+        TArray<FString> PossibleNames = {TEXT("StartGameButton"), TEXT("StartButton"), TEXT("Start")};
+        for (const FString& Name : PossibleNames)
+        {
+            StartGameButton = Cast<UButton>(GetWidgetFromName(*Name));
+            if (StartGameButton)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("🔍 Found StartGameButton with name: %s"), *Name);
+                break;
+            }
+        }
+        
+        // それでも見つからない場合は、すべてのButtonを検索
+        if (!StartGameButton)
+        {
+            TArray<UWidget*> AllChildren;
+            WidgetTree->GetAllWidgets(AllChildren);
+            for (UWidget* Child : AllChildren)
+            {
+                if (UButton* Button = Cast<UButton>(Child))
+                {
+                    FString ButtonName = Button->GetName();
+                    if (ButtonName.Contains(TEXT("Start")) || ButtonName.Contains(TEXT("Game")))
+                    {
+                        StartGameButton = Button;
+                        UE_LOG(LogTemp, Warning, TEXT("🔍 Found StartGameButton by search: %s"), *ButtonName);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (!SettingsButton)
+    {
+        TArray<FString> PossibleNames = {TEXT("SettingsButton"), TEXT("Settings"), TEXT("Option")};
+        for (const FString& Name : PossibleNames)
+        {
+            SettingsButton = Cast<UButton>(GetWidgetFromName(*Name));
+            if (SettingsButton) break;
+        }
+        
+        if (!SettingsButton)
+        {
+            TArray<UWidget*> AllChildren;
+            WidgetTree->GetAllWidgets(AllChildren);
+            for (UWidget* Child : AllChildren)
+            {
+                if (UButton* Button = Cast<UButton>(Child))
+                {
+                    FString ButtonName = Button->GetName();
+                    if (ButtonName.Contains(TEXT("Setting")) || ButtonName.Contains(TEXT("Option")))
+                    {
+                        SettingsButton = Button;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (!QuitButton)
+    {
+        TArray<FString> PossibleNames = {TEXT("QuitButton"), TEXT("Quit"), TEXT("Exit")};
+        for (const FString& Name : PossibleNames)
+        {
+            QuitButton = Cast<UButton>(GetWidgetFromName(*Name));
+            if (QuitButton) break;
+        }
+        
+        if (!QuitButton)
+        {
+            TArray<UWidget*> AllChildren;
+            WidgetTree->GetAllWidgets(AllChildren);
+            for (UWidget* Child : AllChildren)
+            {
+                if (UButton* Button = Cast<UButton>(Child))
+                {
+                    FString ButtonName = Button->GetName();
+                    if (ButtonName.Contains(TEXT("Quit")) || ButtonName.Contains(TEXT("Exit")))
+                    {
+                        QuitButton = Button;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (!TitleText)
+    {
+        TArray<FString> PossibleNames = {TEXT("TitleText"), TEXT("Title"), TEXT("GameTitle")};
+        for (const FString& Name : PossibleNames)
+        {
+            TitleText = Cast<UTextBlock>(GetWidgetFromName(*Name));
+            if (TitleText) break;
+        }
+        
+        if (!TitleText)
+        {
+            TArray<UWidget*> AllChildren;
+            WidgetTree->GetAllWidgets(AllChildren);
+            for (UWidget* Child : AllChildren)
+            {
+                if (UTextBlock* TextBlock = Cast<UTextBlock>(Child))
+                {
+                    FString TextName = TextBlock->GetName();
+                    if (TextName.Contains(TEXT("Title")))
+                    {
+                        TitleText = TextBlock;
+                        break;
+                    }
+                }
+            }
+        }
+    }
     
     // 各ウィジェットの存在チェック
     UE_LOG(LogTemp, Warning, TEXT("🔍 StartGameButton is %s"), StartGameButton ? TEXT("Valid") : TEXT("NULL"));
@@ -70,6 +191,9 @@ void UMainMenuWidget::NativeConstruct()
     }
     
     UE_LOG(LogTemp, Warning, TEXT("🎮 MainMenuWidget constructed successfully"));
+    
+    // デバッグ用：すべてのウィジェット名を出力
+    DebugPrintAllWidgetNames();
 }
 
 void UMainMenuWidget::NativeDestruct()
@@ -131,32 +255,16 @@ void UMainMenuWidget::ShowMainMenu()
 
 void UMainMenuWidget::OnStartGameButtonPressed()
 {
-    UE_LOG(LogTemp, Error, TEXT("🖱️ START BUTTON PRESSED"));
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Button Pressed"));
-    }
+    // ログ削除
 }
 
 void UMainMenuWidget::OnStartGameButtonReleased()
 {
-    UE_LOG(LogTemp, Error, TEXT("🖱️ START BUTTON RELEASED"));
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Button Released"));
-    }
+    // ログ削除
 }
 
 void UMainMenuWidget::OnStartGameButtonClicked()
 {
-    UE_LOG(LogTemp, Error, TEXT("🎯🎯🎯 START GAME BUTTON CLICKED - THIS SHOULD BE VISIBLE 🎯🎯🎯"));
-    
-    // デバッグ用の画面メッセージも表示
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("START BUTTON CLICKED!"));
-    }
-    
     // メインメニューを削除
     RemoveFromParent();
     
@@ -168,35 +276,31 @@ void UMainMenuWidget::OnStartGameButtonClicked()
             // 入力モードをゲームモードに戻す
             PlayerController->bShowMouseCursor = false;
             PlayerController->SetInputMode(FInputModeGameOnly());
-            
-            UE_LOG(LogTemp, Error, TEXT("🎮 Input mode restored to Game Only"));
         }
         
-        // メインゲームレベル(TestWorld)をロード
-        UE_LOG(LogTemp, Error, TEXT("🎯 Loading TestWorld level..."));
-        UGameplayStatics::OpenLevel(this, TEXT("TestWorld"));
+        // メインゲームレベル(testWorld)をロード
+        UGameplayStatics::OpenLevel(this, FName(*FString("testWorld")));
     }
 }
 
 void UMainMenuWidget::OnSettingsButtonClicked()
 {
-    UE_LOG(LogTemp, Warning, TEXT("⚙️ Settings button clicked"));
-    
     // 設定画面の実装（将来的に実装）
-    UE_LOG(LogTemp, Warning, TEXT("⚙️ Settings screen not implemented yet"));
 }
 
 void UMainMenuWidget::OnQuitButtonClicked()
 {
-    UE_LOG(LogTemp, Warning, TEXT("🚪 Quit button clicked"));
-    
     // ゲームを終了
     if (UWorld* World = GetWorld())
     {
         if (APlayerController* PlayerController = World->GetFirstPlayerController())
         {
-            // ゲームを終了
             UKismetSystemLibrary::QuitGame(World, PlayerController, EQuitPreference::Quit, false);
         }
     }
+}
+
+void UMainMenuWidget::DebugPrintAllWidgetNames()
+{
+    // デバッグ機能は無効化
 }
