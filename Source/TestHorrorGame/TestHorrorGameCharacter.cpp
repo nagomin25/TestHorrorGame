@@ -16,6 +16,7 @@
 #include "MenuWidget.h"
 #include "ItemActor.h"
 #include "DoorActor.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -50,6 +51,12 @@ ATestHorrorGameCharacter::ATestHorrorGameCharacter()
 	if (DefaultInteractAction.Succeeded())
 	{
 		InteractAction = DefaultInteractAction.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> DefaultQuitGameAction(TEXT("/Game/ThirdPerson/Input/Actions/IA_QuitGame"));
+	if (DefaultQuitGameAction.Succeeded())
+	{
+		QuitGameAction = DefaultQuitGameAction.Object;
 	}
 	
 	// Set size for collision capsule
@@ -147,6 +154,11 @@ void ATestHorrorGameCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		{
 			UE_LOG(LogTemp, Error, TEXT("❌ InteractAction is not set! Cannot interact with items."));
 		}
+
+		if (!QuitGameAction)
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ QuitGameAction is not set! Cannot quit with ESC key."));
+		}
 		
 		// Moving
 		if (MoveAction)
@@ -172,6 +184,13 @@ void ATestHorrorGameCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Binding InteractAction"));
 			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ATestHorrorGameCharacter::Interact);
+		}
+
+		// ゲーム終了アクションのバインド
+		if (QuitGameAction)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Binding QuitGameAction"));
+			EnhancedInputComponent->BindAction(QuitGameAction, ETriggerEvent::Started, this, &ATestHorrorGameCharacter::QuitGame);
 		}
 	}
 	else
@@ -619,6 +638,18 @@ void ATestHorrorGameCharacter::GameOver()
 			UE_LOG(LogTemp, Error, TEXT("The enemy has caught you!"));
 			UE_LOG(LogTemp, Error, TEXT("GameOverWidgetClass not assigned"));
 			UE_LOG(LogTemp, Error, TEXT("===================="));
+		}
+	}
+}
+
+void ATestHorrorGameCharacter::QuitGame()
+{
+	// ゲーム終了処理
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+		{
+			UKismetSystemLibrary::QuitGame(World, PlayerController, EQuitPreference::Quit, false);
 		}
 	}
 }

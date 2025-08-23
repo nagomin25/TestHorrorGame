@@ -135,6 +135,8 @@ void ADoorActor::GameClear()
 		FInputModeUIOnly InputMode;
 		PC->SetInputMode(InputMode);
 		
-		UE_LOG(LogTemp, Warning, TEXT("✅ ゲームクリア処理完了"));
+		UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenuMap"));
+		
+		UE_LOG(LogTemp, Warning, TEXT("✅ ゲームクリア処理完了 - タイトル画面に戻ります"));
 	}
 }

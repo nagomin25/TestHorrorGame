@@ -56,6 +56,13 @@ class ATestHorrorGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	/** Quit Game Input Action 
+	* ESCキーでゲーム終了
+	* デフォルトパス: /Game/Input/Actions/IA_QuitGame
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* QuitGameAction;
+
 public:
 	ATestHorrorGameCharacter();
 
@@ -132,6 +139,10 @@ public:
 	// ゲームオーバー処理関数
 	UFUNCTION(BlueprintCallable, Category="Health")
 	void GameOver();
+
+	// ゲーム終了関数
+	UFUNCTION(BlueprintCallable, Category="Game")
+	void QuitGame();
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)

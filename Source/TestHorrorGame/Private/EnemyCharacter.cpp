@@ -50,8 +50,6 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("👹 EnemyCharacter spawned: %s"), *GetName());
-	
 	// 初期パトロールポイント設定（レベルに配置されていない場合）
 	if (PatrolPoints.Num() == 0)
 	{
@@ -61,6 +59,18 @@ void AEnemyCharacter::BeginPlay()
 		PatrolPoints.Add(CurrentLocation + FVector(-500.0f, 0.0f, 0.0f));
 		PatrolPoints.Add(CurrentLocation + FVector(0.0f, -500.0f, 0.0f));
 	}
+}
+
+void AEnemyCharacter::BeginDestroy()
+{
+	// タイマーをクリア
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(AttackDamageTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(AttackEndTimerHandle);
+	}
+	
+	Super::BeginDestroy();
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -217,9 +227,12 @@ void AEnemyCharacter::PerformAttack()
 
 	UE_LOG(LogTemp, Warning, TEXT("⚔️ Enemy starting attack animation!"));
 
+	// 既存のタイマーをクリア
+	GetWorld()->GetTimerManager().ClearTimer(AttackDamageTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(AttackEndTimerHandle);
+
 	// 攻撃アニメーションの途中でダメージを与える（タイマーで実装）
-	FTimerHandle AttackDamageTimer;
-	GetWorld()->GetTimerManager().SetTimer(AttackDamageTimer, [this]()
+	GetWorld()->GetTimerManager().SetTimer(AttackDamageTimerHandle, [this]()
 	{
 		// オブジェクトの有効性確認
 		if (!IsValid(this)) return;
@@ -232,8 +245,7 @@ void AEnemyCharacter::PerformAttack()
 	}, 0.8f, false);
 
 	// アニメーション実行後にチェイス状態に戻る（タイマーで実装）
-	FTimerHandle AttackEndTimer;
-	GetWorld()->GetTimerManager().SetTimer(AttackEndTimer, [this]()
+	GetWorld()->GetTimerManager().SetTimer(AttackEndTimerHandle, [this]()
 	{
 		// オブジェクトの有効性確認
 		if (!IsValid(this)) return;

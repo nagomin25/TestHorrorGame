@@ -26,6 +26,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void BeginDestroy() override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -69,6 +70,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Enemy State")
 	float LastAttackTime;
+
+	// タイマーハンドル
+	FTimerHandle AttackDamageTimerHandle;
+	FTimerHandle AttackEndTimerHandle;
 
 	// === 関数 ===
 
